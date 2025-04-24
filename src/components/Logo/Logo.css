@@ -1,0 +1,31 @@
+.logoContainer {
+    border: 1px solid black;
+    margin: 1em;
+    background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+    padding: 0.7em;
+    text-align: center;
+    width: 100px;
+    height: 10%;
+    /* animation: 5s rotate linear infinite alternate; */
+    border-radius: 5%;
+
+
+
+}
+
+img {
+    /* animation: 5s rotate linear infinite alternate; */
+
+}
+
+@keyframes rotate {
+
+    from {
+        transform: rotateZ(0) scale(1);
+    }
+
+    to {
+        transform: rotateZ(360deg) scale(1.4);
+    }
+
+}

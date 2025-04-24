@@ -1,0 +1,13 @@
+nav {
+    display: flex;
+    justify-content: end;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    text-decoration: underline;
+    padding: 0.7em;
+    font-size: 1.1em;
+}
