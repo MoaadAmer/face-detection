@@ -10,9 +10,9 @@ function App() {
   const [imageUrl, setImageUrl] = useState(
     "https://www.usmagazine.com/wp-content/uploads/2021/11/Jake-Ryan-Chris-Hot-Hunks-Walking-Their-Dogs-0003.jpg?quality=40&strip=all"
   );
-  const [faceLocation, setFaceLocation] = useState("");
+  const [boxes, setBoxes] = useState([]);
 
-  async function getFaceBoundingBox(imageUrl) {
+  async function getFacesBoundingBox(imageUrl) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // In this section, we set the user authentication, user and app ID, model details, and the URL
     // of the image we want as an input. Change these strings to run your own example.
@@ -74,48 +74,48 @@ function App() {
         requestOptions
       );
       const result = await response.json();
-      const region = result.outputs[0].data.regions[0];
+      const regions = result.outputs[0].data.regions;
 
-      // Accessing and rounding the bounding box values
-      const boundingBox = region.region_info.bounding_box;
-      const fixedBoundingBox = {
-        topRow: boundingBox.top_row.toFixed(3),
-        leftCol: boundingBox.left_col.toFixed(3),
-        bottomRow: boundingBox.bottom_row.toFixed(3),
-        rightCol: boundingBox.right_col.toFixed(3),
-      };
-      console.log(fixedBoundingBox);
-      return fixedBoundingBox;
+      return regions.map((region) => {
+        // Accessing and rounding the bounding box values
+        const boundingBox = region.region_info.bounding_box;
+        const fixedBoundingBox = {
+          topRow: boundingBox.top_row.toFixed(3),
+          leftCol: boundingBox.left_col.toFixed(3),
+          bottomRow: boundingBox.bottom_row.toFixed(3),
+          rightCol: boundingBox.right_col.toFixed(3),
+        };
+        return fixedBoundingBox;
+      });
     } catch (error) {
       console.log("error", error);
     }
   }
 
-  function calculateFaceLocation(boundingBox) {
+  function calculateFacesLocation(boundingBoxes) {
     const img = document.querySelector("#imageInput");
     const imgWidth = Number(img.width);
     const imgHeight = Number(img.height);
-    return {
-      left: boundingBox.leftCol * imgWidth,
-      top: boundingBox.topRow * img.height,
-      width: imgWidth * (boundingBox.rightCol - boundingBox.leftCol),
-      height: imgHeight * (boundingBox.bottomRow - boundingBox.topRow),
-    };
-  }
-
-  function drawBox(box) {
-    setFaceLocation(box);
+    return boundingBoxes.map((boundingBox) => {
+      return {
+        left: boundingBox.leftCol * imgWidth,
+        top: boundingBox.topRow * img.height,
+        width: imgWidth * (boundingBox.rightCol - boundingBox.leftCol),
+        height: imgHeight * (boundingBox.bottomRow - boundingBox.topRow),
+      };
+    });
   }
 
   async function handleDetect() {
-    let boundingBox = await getFaceBoundingBox(imageUrl);
-    const faceLocation = calculateFaceLocation(boundingBox);
-    drawBox(faceLocation);
+    const boundingBoxes = await getFacesBoundingBox(imageUrl);
+    const faces = calculateFacesLocation(boundingBoxes);
+    console.log(faces);
+    setBoxes(faces);
   }
 
   function handleOnChange(event) {
     setImageUrl(event.target.value);
-    setFaceLocation("");
+    setBoxes([]);
   }
 
   return (
@@ -128,7 +128,7 @@ function App() {
         onButtonSubmit={handleDetect}
         initialValue={imageUrl}
       />
-      <FaceRecognition imageSrc={imageUrl} faceLocation={faceLocation} />
+      <FaceRecognition imageSrc={imageUrl} boxes={boxes} />
     </div>
   );
 }

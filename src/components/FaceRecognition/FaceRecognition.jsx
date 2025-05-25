@@ -1,20 +1,23 @@
 import "./FaceRecognition.css";
 
-export default function FaceRecognition({ imageSrc, faceLocation }) {
+export default function FaceRecognition({ imageSrc, boxes }) {
   return (
     <div id="faceRecognitionContainer">
       <div>
         <img id="imageInput" src={imageSrc} alt="image with people faces" />
-        <div
-          style={{
-            position: "absolute",
-            border: "2px solid green",
-            left: faceLocation.left,
-            top: faceLocation.top,
-            width: faceLocation.width,
-            height: faceLocation.height,
-          }}
-        ></div>
+        {boxes.map((box, index) => (
+          <div
+            key={index}
+            style={{
+              position: "absolute",
+              border: "2px solid green",
+              left: box.left,
+              top: box.top,
+              width: box.width,
+              height: box.height,
+            }}
+          ></div>
+        ))}
       </div>
     </div>
   );
