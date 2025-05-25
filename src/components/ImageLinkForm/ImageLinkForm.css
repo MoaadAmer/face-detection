@@ -4,20 +4,20 @@
     align-items: center;
 }
 
-form {
+.form {
     display: flex;
     flex-wrap:nowrap ;
     padding: 20px 0px;
 
 }
 
-form input[type=text] {
+.form input[type=text] {
     color: black;
     padding: 10px;
 
 }
 
-form button {
+.form button {
     text-decoration: none;
     padding: 10.5px;
     background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
