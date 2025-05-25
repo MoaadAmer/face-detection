@@ -12,7 +12,7 @@ function App() {
   );
   const [faceLocation, setFaceLocation] = useState("");
 
-  function getFaceBoundingBox(imageUrl) {
+  async function getFaceBoundingBox(imageUrl) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // In this section, we set the user authentication, user and app ID, model details, and the URL
     // of the image we want as an input. Change these strings to run your own example.
@@ -64,48 +64,31 @@ function App() {
     // https://api.clarifai.com/v2/models/{YOUR_MODEL_ID}/outputs
     // this will default to the latest version_id
 
-    fetch(
-      "https://cors-anywhere.herokuapp.com/https://api.clarifai.com/v2/models/" +
-        MODEL_ID +
-        "/versions/" +
-        MODEL_VERSION_ID +
-        "/outputs",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        const regions = result.outputs[0].data.regions;
+    try {
+      const response = await fetch(
+        "https://cors-anywhere.herokuapp.com/https://api.clarifai.com/v2/models/" +
+          MODEL_ID +
+          "/versions/" +
+          MODEL_VERSION_ID +
+          "/outputs",
+        requestOptions
+      );
+      const result = await response.json();
+      const region = result.outputs[0].data.regions[0];
 
-        regions.forEach((region) => {
-          // Accessing and rounding the bounding box values
-          const boundingBox = region.region_info.bounding_box;
-          const topRow = boundingBox.top_row.toFixed(3);
-          const leftCol = boundingBox.left_col.toFixed(3);
-          const bottomRow = boundingBox.bottom_row.toFixed(3);
-          const rightCol = boundingBox.right_col.toFixed(3);
-
-          region.data.concepts.forEach((concept) => {
-            // Accessing and rounding the concept value
-            const name = concept.name;
-            const value = concept.value.toFixed(4);
-
-            console.log(
-              `${name}: ${value} BBox: ${topRow}, ${leftCol}, ${bottomRow}, ${rightCol}`
-            );
-            return {
-              top: topRow,
-              right: rightCol,
-              bottom: bottomRow,
-              left: leftCol,
-            };
-          });
-        });
-      })
-      .catch((error) => console.log("error", error));
-
-}
-  function drawBox(box) {
-    setFaceLocation(box);
+      // Accessing and rounding the bounding box values
+      const boundingBox = region.region_info.bounding_box;
+      const fixedBoundingBox = {
+        topRow: boundingBox.top_row.toFixed(3),
+        leftCol: boundingBox.left_col.toFixed(3),
+        bottomRow: boundingBox.bottom_row.toFixed(3),
+        rightCol: boundingBox.right_col.toFixed(3),
+      };
+      console.log(fixedBoundingBox);
+      return fixedBoundingBox;
+    } catch (error) {
+      console.log("error", error);
+    }
   }
 
   function calculateFaceLocation(boundingBox) {
@@ -120,14 +103,19 @@ function App() {
     };
   }
 
-  function handleDetect() {
-    let boundingBox = getFaceBoundingBox(imageUrl);
+  function drawBox(box) {
+    setFaceLocation(box);
+  }
+
+  async function handleDetect() {
+    let boundingBox = await getFaceBoundingBox(imageUrl);
     const faceLocation = calculateFaceLocation(boundingBox);
     drawBox(faceLocation);
   }
 
   function handleOnChange(event) {
     setImageUrl(event.target.value);
+    setFaceLocation("");
   }
 
   return (
