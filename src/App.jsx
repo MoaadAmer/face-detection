@@ -4,13 +4,14 @@ import Logo from "./components/Logo/Logo";
 import Rank from "./components/Rank/Rank";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import SignIn from "./components/SignIn/signin";
 
 function App() {
   const [imageUrl, setImageUrl] = useState(
     "https://www.usmagazine.com/wp-content/uploads/2021/11/Jake-Ryan-Chris-Hot-Hunks-Walking-Their-Dogs-0003.jpg?quality=40&strip=all"
   );
+  const imageRef = useRef(null);
   const [boxes, setBoxes] = useState([]);
   const [router, setRouter] = useState("signin");
 
@@ -95,7 +96,7 @@ function App() {
   }
 
   function calculateFacesLocation(boundingBoxes) {
-    const img = document.querySelector("#imageInput");
+    const img = imageRef.current;
     const imgWidth = Number(img.width);
     const imgHeight = Number(img.height);
     return boundingBoxes.map((boundingBox) => {
@@ -125,12 +126,11 @@ function App() {
 
   return (
     <div className="app">
-    
       {router === "signin" ? (
         <SignIn signInClickHandler={handleRoute} />
       ) : (
         <>
-          <Navigation signOutHandler={handleRoute}/>
+          <Navigation signOutHandler={handleRoute} />
           <Logo />
           <Rank />
           <ImageLinkForm
@@ -138,7 +138,11 @@ function App() {
             onButtonSubmit={handleDetect}
             initialValue={imageUrl}
           />
-          <FaceRecognition imageSrc={imageUrl} boxes={boxes} />
+          <FaceRecognition
+            imageRef={imageRef}
+            imageSrc={imageUrl}
+            boxes={boxes}
+          />
         </>
       )}
     </div>

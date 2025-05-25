@@ -1,10 +1,10 @@
 import "./FaceRecognition.css";
 
-export default function FaceRecognition({ imageSrc, boxes }) {
+export default function FaceRecognition({ imageRef,imageSrc, boxes }) {
   return (
     <div id="faceRecognitionContainer">
       <div>
-        <img id="imageInput" src={imageSrc} alt="image with people faces" />
+        <img id="imageInput" ref={imageRef} src={imageSrc} alt="image with people faces" />
         {boxes.map((box, index) => (
           <div
             key={index}
