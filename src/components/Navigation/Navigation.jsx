@@ -1,8 +1,8 @@
 import "./Navigation.css";
-export default function Navigation() {
+export default function Navigation({signOutHandler}) {
   return (
     <nav>
-      <button>Sign Out</button>
+      <button onClick={()=>signOutHandler('signin')}>Sign Out</button>
     </nav>
   );
 }
