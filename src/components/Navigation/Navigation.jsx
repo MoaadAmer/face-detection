@@ -1,8 +1,8 @@
 import "./Navigation.css";
-export default function Navigation({signOutHandler}) {
+export default function Navigation({onRouteChange}) {
   return (
     <nav>
-      <button onClick={()=>signOutHandler('signin')}>Sign Out</button>
+      <button onClick={()=>onRouteChange('signin')}>Sign Out</button>
     </nav>
   );
 }

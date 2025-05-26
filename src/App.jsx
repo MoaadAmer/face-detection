@@ -6,6 +6,7 @@ import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import { useState, useRef } from "react";
 import SignIn from "./components/SignIn/signin";
+import Register from "./components/Register/Register";
 
 function App() {
   const [imageUrl, setImageUrl] = useState(
@@ -124,13 +125,11 @@ function App() {
     setRouter(route);
   }
 
-  return (
-    <div className="app">
-      {router === "signin" ? (
-        <SignIn signInClickHandler={handleRoute} />
-      ) : (
+  switch (router) {
+    case "home":
+      return (
         <>
-          <Navigation signOutHandler={handleRoute} />
+          <Navigation onRouteChange={handleRoute} />
           <Logo />
           <Rank />
           <ImageLinkForm
@@ -144,9 +143,15 @@ function App() {
             boxes={boxes}
           />
         </>
-      )}
-    </div>
-  );
+      );
+    case "signin":
+      return <SignIn onRouteChange={handleRoute} />;
+    case "register":
+      return <Register onRouteChange={handleRoute} />;
+
+    default:
+      break;
+  }
 }
 
 export default App;

@@ -1,10 +1,12 @@
-import "./SignIn.css";
+import "./Register.css";
 
-export default function SignIn({ onRouteChange }) {
+export default function Register({ onRouteChange }) {
   return (
     <>
       <div className="form-container">
         <div className="sign-in-form">
+          <label htmlFor="email">Name:</label>
+          <input type="text" id="name" placeholder="Enter your name" />
           <label htmlFor="email">Email:</label>
           <input type="email" id="email" placeholder="Enter your email" />
           <label htmlFor="password">Password:</label>
@@ -14,10 +16,8 @@ export default function SignIn({ onRouteChange }) {
             placeholder="Enter your password"
           />
           <button type="submit" onClick={()=>onRouteChange('home')}>
-            Sign In
+            Register
           </button>
-
-          <p id="register" onClick={()=>onRouteChange('register')}>Register</p>
         </div>
       </div>
     </>
