@@ -1,6 +1,10 @@
 import express from "express";
 import fs from "node:fs/promises";
 
+// import passwordHelper from "./helpers/passwordHelper.js";
+
+import bcrypt from "bcrypt";
+
 let database;
 async function readDatabase() {
   try {
@@ -44,7 +48,8 @@ app.get("/users/:id", (req, res) => {
 app.post("/signin", (req, res) => {
   const { email, password } = req.body;
   const validUser = database.users.some(
-    (user) => user.email === email && user.password === password
+    async (user) =>
+      user.email === email && (await compare(password, user.password))
   );
   if (validUser) {
     res.json("success");
@@ -66,7 +71,7 @@ app.post("/register", async (req, res) => {
       id: getNextId().toString(),
       name: name,
       email: email,
-      password: password,
+      password: await hash(password),
     };
     database.users.push(newUser);
     await saveDatabase();
@@ -90,4 +95,14 @@ app.listen(port, () => {
 
 function getNextId() {
   return Math.max(...database.users.map((user) => Number(user.id))) + 1;
+}
+
+async function hash(password) {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+}
+
+async function compare(password, hash) {
+  const result = await bcrypt.compare(password, hash);
+  return result === true;
 }
