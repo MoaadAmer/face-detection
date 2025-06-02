@@ -31,6 +31,8 @@
 }
 
 .sign-in-form input {
+
+    color: black;
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -70,8 +72,9 @@
     background-color: #007bff;
 }
 
-.error {
+#error {
     color: red;
     margin-bottom: 10px;
     text-align: center;
+    font-weight: bold;
 }

@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 // import passwordHelper from "./helpers/passwordHelper.js";
 
 import bcrypt from "bcrypt";
+import cors from "cors";
 
 let database;
 async function readDatabase() {
@@ -30,6 +31,7 @@ await readDatabase();
 const port = 3000;
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/users", (req, res) => {
@@ -45,13 +47,9 @@ app.get("/users/:id", (req, res) => {
   res.json(user);
 });
 
-app.post("/signin", (req, res) => {
+app.post("/signin", async (req, res) => {
   const { email, password } = req.body;
-  const validUser = database.users.some(
-    async (user) =>
-      user.email === email && (await compare(password, user.password))
-  );
-  if (validUser) {
+  if (await isUserValid(email, password)) {
     res.json("success");
   } else {
     res.status(400).json("invalid");
@@ -72,6 +70,8 @@ app.post("/register", async (req, res) => {
       name: name,
       email: email,
       password: await hash(password),
+      entries: 0,
+      joinedData: new Date(),
     };
     database.users.push(newUser);
     await saveDatabase();
@@ -94,7 +94,12 @@ app.listen(port, () => {
 });
 
 function getNextId() {
-  return Math.max(...database.users.map((user) => Number(user.id))) + 1;
+  const ids = database.users.map((user) => Number(user.id));
+  if (ids.length > 0) {
+    return Math.max(...ids) + 1;
+  } else {
+    return 1;
+  }
 }
 
 async function hash(password) {
@@ -105,4 +110,13 @@ async function hash(password) {
 async function compare(password, hash) {
   const result = await bcrypt.compare(password, hash);
   return result === true;
+}
+
+async function isUserValid(email, password) {
+  for (let user of database.users) {
+    if (user.email === email && (await compare(password, user.password))) {
+      return true;
+    }
+  }
+  return false;
 }
