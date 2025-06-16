@@ -49,8 +49,9 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/signin", async (req, res) => {
   const { email, password } = req.body;
-  if (await isUserValid(email, password)) {
-    res.json("success");
+  const user = await getUserFromDb(email, password);
+  if (user !== null) {
+    res.json(user);
   } else {
     res.status(400).json("invalid");
   }
@@ -112,11 +113,11 @@ async function compare(password, hash) {
   return result === true;
 }
 
-async function isUserValid(email, password) {
+async function getUserFromDb(email, password) {
   for (let user of database.users) {
     if (user.email === email && (await compare(password, user.password))) {
-      return true;
+      return user;
     }
   }
-  return false;
+  return null;
 }

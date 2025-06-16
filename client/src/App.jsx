@@ -15,6 +15,7 @@ function App() {
   const imageRef = useRef(null);
   const [boxes, setBoxes] = useState([]);
   const [router, setRouter] = useState("signin");
+  const [user, setUser] = useState(null);
 
   async function getFacesBoundingBox(imageUrl) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +116,28 @@ function App() {
     const faces = calculateFacesLocation(boundingBoxes);
     console.log(faces);
     setBoxes(faces);
+    updateRank();
+  }
+
+  async function updateRank() {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/users/${user.id}/image`,
+        {
+          method: "put",
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+      if (response.ok === true) {
+        const returnedUser = await response.json();
+        user.entries = returnedUser.entries;
+        loadUser(user);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleOnChange(event) {
@@ -124,6 +147,9 @@ function App() {
   function handleRoute(route) {
     setRouter(route);
   }
+  function loadUser(user) {
+    setUser(user);
+  }
 
   switch (router) {
     case "home":
@@ -131,7 +157,7 @@ function App() {
         <>
           <Navigation onRouteChange={handleRoute} />
           <Logo />
-          <Rank />
+          <Rank username={user.name} rank={user.entries} />
           <ImageLinkForm
             onInputChange={handleOnChange}
             onButtonSubmit={handleDetect}
@@ -145,7 +171,7 @@ function App() {
         </>
       );
     case "signin":
-      return <SignIn onRouteChange={handleRoute} />;
+      return <SignIn onRouteChange={handleRoute} loadUser={loadUser} />;
     case "register":
       return <Register onRouteChange={handleRoute} />;
 

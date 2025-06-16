@@ -1,9 +1,10 @@
-const Rank = () => {
-
-    return(
-<div>
-    <p>Moaad your current rank is #5</p>
-</div>
-    );
+const Rank = ({ username, rank }) => {
+  return (
+    <div>
+      <p>
+        {username} your current rank is #{rank}
+      </p>
+    </div>
+  );
 };
 export default Rank;

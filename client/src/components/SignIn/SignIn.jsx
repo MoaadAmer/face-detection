@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./SignIn.css";
 import { useRef } from "react";
 
-export default function SignIn({ onRouteChange }) {
+export default function SignIn({ onRouteChange, loadUser }) {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const [showErrorMessage, setshowErrorMessage] = useState(false);
@@ -23,6 +23,8 @@ export default function SignIn({ onRouteChange }) {
         if (!response.ok) {
           setshowErrorMessage(true);
         } else {
+          const user = await response.json();
+          loadUser(user);
           onRouteChange("home");
         }
       } catch (error) {
