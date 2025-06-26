@@ -52,13 +52,11 @@ async function addUser(user) {
 }
 
 async function updateUserEntries(id, entries) {
-
-    const text = `UPDATE users
+  const text = `UPDATE users
     SET entries = $1
     WHERE id =$2`;
-    const values = [entries, id];
-    const result = await query(text, values);
-
+  const values = [entries, id];
+  const result = await query(text, values);
 }
 
 async function query(text, params) {

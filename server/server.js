@@ -7,8 +7,9 @@ import {
   updateUserEntries,
 } from "./helpers/databaseHelper.js";
 
-import bcrypt from "bcrypt";
 import cors from "cors";
+
+import * as passwordHelper from "./helpers/passwordHelper.js";
 
 const port = 3000;
 const app = express();
@@ -40,7 +41,7 @@ app.post("/signin", async (req, res) => {
   if (
     user &&
     user.email === email &&
-    (await compare(password, user.password))
+    (await passwordHelper.compare(password, user.password))
   ) {
     res.json(user);
   } else {
@@ -60,7 +61,7 @@ app.post("/register", async (req, res) => {
     const newUser = {
       name: name,
       email: email,
-      password: await hash(password),
+      password: await passwordHelper.hash(password),
       entries: 0,
       joinedDate: new Date(),
     };
@@ -79,13 +80,3 @@ app.put("/users/:id/image", async (req, res) => {
     res.status(404).json("No such user");
   }
 });
-
-async function hash(password) {
-  const saltRounds = 10;
-  return await bcrypt.hash(password, saltRounds);
-}
-
-async function compare(password, hash) {
-  const result = await bcrypt.compare(password, hash);
-  return result === true;
-}
