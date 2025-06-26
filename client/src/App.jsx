@@ -131,8 +131,8 @@ function App() {
         }
       );
       if (response.ok === true) {
-        const returnedUser = await response.json();
-        user.entries = returnedUser.entries;
+        const newEntries = await response.json();
+        user.entries = newEntries;
         loadUser(user);
       }
     } catch (error) {
