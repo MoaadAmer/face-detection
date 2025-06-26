@@ -36,8 +36,13 @@ app.get("/users/:id", async (req, res) => {
 
 app.post("/signin", async (req, res) => {
   const { email, password } = req.body;
-  if (await isSignInValid(email, password)) {
-    res.json("success");
+  const user = await getUserByEmail(email);
+  if (
+    user &&
+    user.email === email &&
+    (await compare(password, user.password))
+  ) {
+    res.json(user);
   } else {
     res.status(400).json("invalid");
   }
@@ -83,11 +88,4 @@ async function hash(password) {
 async function compare(password, hash) {
   const result = await bcrypt.compare(password, hash);
   return result === true;
-}
-
-async function isSignInValid(email, password) {
-  const user = await getUserByEmail(email);
-  return (
-    user && user.email === email && (await compare(password, user.password))
-  );
 }
