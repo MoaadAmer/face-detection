@@ -75,7 +75,7 @@ app.put("/users/:id/image", async (req, res) => {
   let user = await getUserById(id);
   if (user) {
     updateUserEntries(id, user.entries + 1);
-    res.json(user);
+    res.json("success");
   } else {
     res.status(404).json("No such user");
   }
