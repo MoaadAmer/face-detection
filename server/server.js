@@ -1,32 +1,14 @@
 import express from "express";
-import fs from "node:fs/promises";
-
-// import passwordHelper from "./helpers/passwordHelper.js";
+import {
+  getUsers,
+  getUserById,
+  getUserByEmail,
+  addUser,
+  updateUserEntries,
+} from "./helpers/databaseHelper.js";
 
 import bcrypt from "bcrypt";
 import cors from "cors";
-
-let database;
-async function readDatabase() {
-  try {
-    database = JSON.parse(
-      await fs.readFile("./database.json", { encoding: "utf8" })
-    );
-  } catch (err) {
-    console.error(err.message);
-  }
-}
-
-async function saveDatabase() {
-  try {
-    await fs.writeFile("./database.json", JSON.stringify(database));
-    await readDatabase();
-  } catch (err) {
-    console.error(err.message, "20");
-  }
-}
-
-await readDatabase();
 
 const port = 3000;
 const app = express();
@@ -34,24 +16,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/users", (req, res) => {
-  res.json(database.users);
+app.listen(port, () => {
+  console.log(`app listening on port ${port}`);
 });
 
-app.get("/users/:id", (req, res) => {
+app.get("/users", async (req, res) => {
+  res.json(await getUsers());
+});
+
+app.get("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const user = database.users.find((user) => user.id === id);
-  if (user === undefined) {
+  const user = await getUserById(id);
+  if (user) {
+    res.json(user);
+  } else {
     res.status(404).json("No such user");
   }
-  res.json(user);
 });
 
 app.post("/signin", async (req, res) => {
   const { email, password } = req.body;
-  const user = await getUserFromDb(email, password);
-  if (user !== null) {
-    res.json(user);
+  if (await isSignInValid(email, password)) {
+    res.json("success");
   } else {
     res.status(400).json("invalid");
   }
@@ -61,47 +47,33 @@ app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   if (name === "" || email === "" || password === "") {
     res.status(400).json("all fields are mandatory");
-  } else if (database.users.some((user) => user.email === email)) {
+  } else if (await getUserByEmail(email)) {
     res
       .status(400)
       .json("this email already registerd, please enter different one");
   } else {
     const newUser = {
-      id: getNextId().toString(),
       name: name,
       email: email,
       password: await hash(password),
       entries: 0,
-      joinedData: new Date(),
+      joinedDate: new Date(),
     };
-    database.users.push(newUser);
-    await saveDatabase();
+    await addUser(newUser);
     res.json(newUser);
   }
 });
 
-app.put("/users/:id/image", (req, res) => {
+app.put("/users/:id/image", async (req, res) => {
   const { id } = req.params;
-  let user = database.users.find((user) => user.id === id);
-  if (user === undefined) {
+  let user = await getUserById(id);
+  if (user) {
+    updateUserEntries(id, user.entries + 1);
+    res.json(user);
+  } else {
     res.status(404).json("No such user");
   }
-  user.entries++;
-  saveDatabase();
-  res.json(user);
 });
-app.listen(port, () => {
-  console.log(`app listening on port ${port}`);
-});
-
-function getNextId() {
-  const ids = database.users.map((user) => Number(user.id));
-  if (ids.length > 0) {
-    return Math.max(...ids) + 1;
-  } else {
-    return 1;
-  }
-}
 
 async function hash(password) {
   const saltRounds = 10;
@@ -113,11 +85,9 @@ async function compare(password, hash) {
   return result === true;
 }
 
-async function getUserFromDb(email, password) {
-  for (let user of database.users) {
-    if (user.email === email && (await compare(password, user.password))) {
-      return user;
-    }
-  }
-  return null;
+async function isSignInValid(email, password) {
+  const user = await getUserByEmail(email);
+  return (
+    user && user.email === email && (await compare(password, user.password))
+  );
 }
