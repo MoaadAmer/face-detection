@@ -6,26 +6,6 @@
     text-align: center;
     width: 100px;
     height: 10%;
-    /* animation: 5s rotate linear infinite alternate; */
     border-radius: 5%;
-
-
-
-}
-
-img {
-    /* animation: 5s rotate linear infinite alternate; */
-
-}
-
-@keyframes rotate {
-
-    from {
-        transform: rotateZ(0) scale(1);
-    }
-
-    to {
-        transform: rotateZ(360deg) scale(1.4);
-    }
 
 }

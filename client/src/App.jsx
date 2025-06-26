@@ -171,10 +171,19 @@ function App() {
         </>
       );
     case "signin":
-      return <SignIn onRouteChange={handleRoute} loadUser={loadUser} />;
+      return (
+        <>
+          <Logo />
+          <SignIn onRouteChange={handleRoute} loadUser={loadUser} />
+        </>
+      );
     case "register":
-      return <Register onRouteChange={handleRoute} />;
-
+      return (
+        <>
+          <Logo />
+          <Register onRouteChange={handleRoute} />
+        </>
+      );
     default:
       break;
   }
