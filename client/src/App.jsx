@@ -18,7 +18,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   async function getFacesBoundingBox(imageUrl) {
-    const PAT = "e64060f8f90b41af919c6ff60fef54c7";
+    const PAT = "";
     const USER_ID = "z58166sfn3rxs";
     const APP_ID = "test";
     const MODEL_ID = "face-detection";
