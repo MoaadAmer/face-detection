@@ -1,0 +1,19 @@
+@baseUrl = http://localhost:3000
+
+
+//getUsers
+GET {{baseUrl}}/users
+
+
+//getUserById
+
+GET {{baseUrl}}/users/19
+
+
+//
+PUT  {{{{baseUrl}}}}/users/19/image
+Content-Type: application/json
+
+{
+"imageUrl":"https://images.pexels.com/photos/34514/spot-runs-start-la.jpg?_gl=1*wnlfk0*_ga*ODYwMTU2ODQ1LjE3NTIxNzIyNDU.*_ga_8JE65Q40S6*czE3NTIxNzIyNDUkbzEkZzEkdDE3NTIxNzIyNzkkajI2JGwwJGgw"
+}
