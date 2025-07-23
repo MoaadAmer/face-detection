@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import {
   getUsers,
   getUserById,
@@ -10,6 +10,8 @@ import {
 import cors from "cors";
 
 import * as passwordHelper from "./helpers/passwordHelper.js";
+
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const port = 3000;
 const app = express();
@@ -72,12 +74,72 @@ app.post("/register", async (req, res) => {
 
 app.put("/users/:id/image", async (req, res) => {
   const { id } = req.params;
+  const { imageUrl } = req.body;
   let user = await getUserById(id);
   if (user) {
+    const PAT = "";
+    const USER_ID = "z58166sfn3rxs";
+    const APP_ID = "test";
+    const MODEL_ID = "face-detection";
+    const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
+
+    const raw = JSON.stringify({
+      user_app_id: {
+        user_id: USER_ID,
+        app_id: APP_ID,
+      },
+      inputs: [
+        {
+          data: {
+            image: {
+              url: imageUrl,
+            },
+          },
+        },
+      ],
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Key " + PAT,
+      },
+      body: raw,
+    };
+    let regions;
+    try {
+      const response = await fetch(
+        "https://api.clarifai.com/v2/models/" +
+          MODEL_ID +
+          "/versions/" +
+          MODEL_VERSION_ID +
+          "/outputs",
+        requestOptions
+      );
+      const result = await response.json();
+      regions = result.outputs[0].data.regions;
+
+      regions = regions.map((region) => {
+        // Accessing and rounding the bounding box values
+        const boundingBox = region.region_info.bounding_box;
+        return {
+          topRow: boundingBox.top_row.toFixed(3),
+          leftCol: boundingBox.left_col.toFixed(3),
+          bottomRow: boundingBox.bottom_row.toFixed(3),
+          rightCol: boundingBox.right_col.toFixed(3),
+        };
+      });
+    } catch (error) {
+      return res.status(503).json(`something went wrong : ${error}`);
+    }
     const newEntries = user.entries + 1;
     updateUserEntries(id, user.entries + 1);
-    res.json(newEntries);
+    res.json({
+      entries: newEntries,
+      boundingBoxes: regions,
+    });
   } else {
-    res.status(404).json("No such user");
+    return res.status(404).json("No such user");
   }
 });
