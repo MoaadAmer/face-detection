@@ -8,8 +8,8 @@ export default function SignIn({ onRouteChange, loadUser }) {
   const passwordRef = useRef(null);
   const [showErrorMessage, setshowErrorMessage] = useState(false);
 
-  async function onSumbitHandler() {
-    if (emailRef.current.value !== "" && passwordRef.current.value !== "") {
+  const onSumbitHandler = async () => {
+    if (emailRef.current.value && passwordRef.current.value) {
       try {
         const response = await fetch(`${serverUrl}/signin`, {
           method: "POST",
@@ -34,7 +34,7 @@ export default function SignIn({ onRouteChange, loadUser }) {
     } else {
       setshowErrorMessage(true);
     }
-  }
+  };
 
   return (
     <>

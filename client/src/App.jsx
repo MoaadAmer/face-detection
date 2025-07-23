@@ -9,7 +9,7 @@ import SignIn from "./components/SignIn/signin";
 import Register from "./components/Register/Register";
 import { serverUrl } from "./config";
 
-function App() {
+const App = () => {
   const [imageUrl, setImageUrl] = useState(
     "https://www.usmagazine.com/wp-content/uploads/2021/11/Jake-Ryan-Chris-Hot-Hunks-Walking-Their-Dogs-0003.jpg?quality=40&strip=all"
   );
@@ -18,7 +18,7 @@ function App() {
   const [router, setRouter] = useState("signin");
   const [user, setUser] = useState(null);
 
-  function calculateFacesLocation(boundingBoxes) {
+  const calculateFacesLocation = (boundingBoxes) => {
     const img = imageRef.current;
     const imgWidth = Number(img.width);
     const imgHeight = Number(img.height);
@@ -30,9 +30,9 @@ function App() {
         height: imgHeight * (box.bottomRow - box.topRow),
       };
     });
-  }
+  };
 
-  async function handleDetect() {
+  const handleDetect = async () => {
     try {
       const response = await fetch(`${serverUrl}/users/${user.id}/image`, {
         method: "PUT",
@@ -44,25 +44,20 @@ function App() {
       if (response.ok) {
         const resContent = await response.json();
         const faces = calculateFacesLocation(resContent.boundingBoxes);
-        console.log(faces);
         setBoxes(faces);
         user.entries = resContent.entries;
       }
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  function handleOnChange(event) {
+  const handleOnChange = (event) => {
     setImageUrl(event.target.value);
     setBoxes([]);
-  }
-  function handleRoute(route) {
-    setRouter(route);
-  }
-  function loadUser(user) {
-    setUser(user);
-  }
+  };
+  const handleRoute = (route) => setRouter(route);
+  const loadUser = (user) => setUser(user);
 
   switch (router) {
     case "home":
@@ -100,6 +95,6 @@ function App() {
     default:
       break;
   }
-}
+};
 
 export default App;
