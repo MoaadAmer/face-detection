@@ -89,7 +89,7 @@ const App = () => {
       return (
         <>
           <Logo />
-          <Register onRouteChange={handleRoute} />
+          <Register onRouteChange={handleRoute}  loadUser={loadUser} />
         </>
       );
     default:

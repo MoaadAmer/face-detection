@@ -67,7 +67,7 @@ app.post("/register", async (req, res) => {
       joinedDate: new Date(),
     };
     await addUser(newUser);
-    res.json(newUser);
+    res.json(await getUserByEmail(newUser.email));
   }
 });
 

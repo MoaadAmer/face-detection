@@ -2,7 +2,7 @@ import "./Register.css";
 import { useRef, useState } from "react";
 import { serverUrl } from "../../config.js";
 
-export default function Register({ onRouteChange }) {
+export default function Register({ onRouteChange, loadUser }) {
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
@@ -34,6 +34,7 @@ export default function Register({ onRouteChange }) {
           setErrorMessage(responseText);
         } else {
           onRouteChange("home");
+          loadUser(await response.json());
         }
       } catch (error) {
         setErrorMessage("could not register, please try again");
