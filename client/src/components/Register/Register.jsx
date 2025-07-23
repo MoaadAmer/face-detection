@@ -8,11 +8,11 @@ export default function Register({ onRouteChange }) {
   const password = useRef(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  async function onSubmitHandler() {
+  const onSubmitHandler = async () => {
     if (
-      name.current.value === "" ||
-      email.current.value === "" ||
-      password.current.value === ""
+      !name.current.value ||
+      !email.current.value ||
+      !password.current.value
     ) {
       setErrorMessage("all field are mandatory");
     } else {
@@ -29,7 +29,6 @@ export default function Register({ onRouteChange }) {
           }),
         });
         if (!response.ok) {
-          console.log(response);
           let responseText = await response.text();
           responseText = responseText.replaceAll('"', "");
           setErrorMessage(responseText);
@@ -41,7 +40,7 @@ export default function Register({ onRouteChange }) {
         console.error(error);
       }
     }
-  }
+  };
 
   return (
     <>

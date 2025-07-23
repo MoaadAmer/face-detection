@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import {
   getUsers,
   getUserById,
@@ -52,7 +52,7 @@ app.post("/signin", async (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
-  if (name === "" || email === "" || password === "") {
+  if (!name || !email || !password) {
     res.status(400).json("all fields are mandatory");
   } else if (await getUserByEmail(email)) {
     res

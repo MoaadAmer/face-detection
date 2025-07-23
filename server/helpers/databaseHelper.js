@@ -13,7 +13,7 @@ async function getUsers() {
   try {
     return (await query("SELECT * from users"))?.rows;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -24,7 +24,7 @@ async function getUserById(id) {
       return res.rows[0];
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -57,7 +57,7 @@ async function updateUserEntries(id, entries) {
     SET entries = $1
     WHERE id =$2`;
   const values = [entries, id];
-  const result = await query(text, values);
+  await query(text, values);
 }
 
 async function query(text, params) {
