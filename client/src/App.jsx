@@ -7,6 +7,7 @@ import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import { useState, useRef } from "react";
 import SignIn from "./components/SignIn/signin";
 import Register from "./components/Register/Register";
+import { serverUrl } from "./config";
 
 function App() {
   const [imageUrl, setImageUrl] = useState(
@@ -33,16 +34,13 @@ function App() {
 
   async function handleDetect() {
     try {
-      const response = await fetch(
-        `http://localhost:3000/users/${user.id}/image`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ imageUrl: imageUrl }),
-        }
-      );
+      const response = await fetch(`${serverUrl}/users/${user.id}/image`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl: imageUrl }),
+      });
       if (response.ok) {
         const resContent = await response.json();
         const faces = calculateFacesLocation(resContent.boundingBoxes);
