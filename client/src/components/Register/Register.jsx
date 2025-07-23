@@ -1,5 +1,6 @@
 import "./Register.css";
 import { useRef, useState } from "react";
+import { serverUrl } from "../../config.js";
 
 export default function Register({ onRouteChange }) {
   const name = useRef(null);
@@ -16,7 +17,7 @@ export default function Register({ onRouteChange }) {
       setErrorMessage("all field are mandatory");
     } else {
       try {
-        const response = await fetch("http://localhost:3000/register", {
+        const response = await fetch(`${serverUrl}/register`, {
           headers: {
             "Content-Type": "application/json",
           },

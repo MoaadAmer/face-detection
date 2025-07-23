@@ -6,10 +6,9 @@ import {
   addUser,
   updateUserEntries,
 } from "./helpers/databaseHelper.js";
-
 import cors from "cors";
-
 import * as passwordHelper from "./helpers/passwordHelper.js";
+import "dotenv/config";
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
@@ -77,8 +76,8 @@ app.put("/users/:id/image", async (req, res) => {
   const { imageUrl } = req.body;
   let user = await getUserById(id);
   if (user) {
-    const PAT = "";
-    const USER_ID = "z58166sfn3rxs";
+    const PAT = process.env.PAT;
+    const USER_ID = process.env.USER_ID;
     const APP_ID = "test";
     const MODEL_ID = "face-detection";
     const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";

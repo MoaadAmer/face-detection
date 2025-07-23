@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./SignIn.css";
 import { useRef } from "react";
+import { serverUrl } from "../../config.js";
 
 export default function SignIn({ onRouteChange, loadUser }) {
   const emailRef = useRef(null);
@@ -10,7 +11,7 @@ export default function SignIn({ onRouteChange, loadUser }) {
   async function onSumbitHandler() {
     if (emailRef.current.value !== "" && passwordRef.current.value !== "") {
       try {
-        const response = await fetch("http://localhost:3000/signin", {
+        const response = await fetch(`${serverUrl}/signin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
